@@ -25,6 +25,7 @@ shell-integration = zsh
 shell-integration-features = cursor,sudo,title
 
 # Behavior
+link-url = true
 mouse-hide-while-typing = true
 copy-on-select = false
 confirm-close-surface = false
