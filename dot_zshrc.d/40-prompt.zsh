@@ -21,7 +21,7 @@ fi
 
 # ─── fastfetch on new interactive shell ──────
 # Only show on first shell in a terminal (not in tmux splits, subshells, etc.)
-if [[ -z "$TMUX" ]] && [[ -z "$FORGE_FASTFETCH_SHOWN" ]]; then
-    export FORGE_FASTFETCH_SHOWN=1
+if [[ -z "$TMUX" ]] && [[ -z "$DOTFILES_FASTFETCH_SHOWN" ]]; then
+    export DOTFILES_FASTFETCH_SHOWN=1
     command -v fastfetch &> /dev/null && fastfetch
 fi

@@ -3,9 +3,17 @@
 # ─── Navigation ──────────────────────────────
 alias ..="cd .."
 alias ...="cd ../.."
-alias ls="ls --color=auto"
-alias ll="ls -lah"
-alias la="ls -la"
+
+if command -v eza &>/dev/null; then
+    alias ls="eza"
+    alias ll="eza -lah --git"
+    alias la="eza -la --git"
+    alias lt="eza --tree --level=2"
+else
+    alias ls="ls -G"
+    alias ll="ls -lah"
+    alias la="ls -la"
+fi
 
 # ─── Git ─────────────────────────────────────
 alias g="git"
@@ -21,15 +29,6 @@ alias gp="git push"
 alias gpf="git push --force-with-lease"
 alias gwt="git worktree"
 alias gwtl="git worktree list"
-
-# ─── Kubernetes ──────────────────────────────
-alias k="kubectl"
-alias kgp="kubectl get pods"
-alias kgs="kubectl get services"
-alias kgd="kubectl get deployments"
-alias kl="kubectl logs -f"
-alias kx="kubectx"
-alias kn="kubens"
 
 # ─── Docker ──────────────────────────────────
 alias d="docker"

@@ -7,7 +7,6 @@ format = """
 $directory\
 $git_branch\
 $git_status\
-$kubernetes\
 $env_var\
 $fill\
 $cmd_duration\
@@ -40,15 +39,9 @@ modified = "!"
 staged = "+"
 untracked = "?"
 
-[kubernetes]
-disabled = false
-format = " [$context(:$namespace)]($style) "
-style = "cyan"
-detect_files = ["k8s", "Chart.yaml", "helmfile.yaml"]
-
 # Active agent indicator (set by 30-agents.zsh)
-[env_var.FORGE_ACTIVE_AGENT]
-variable = "FORGE_ACTIVE_AGENT"
+[env_var.DOTFILES_ACTIVE_AGENT]
+variable = "DOTFILES_ACTIVE_AGENT"
 format = " [$env_value]($style) "
 style = "bold green"
 description = "Currently running coding agent"

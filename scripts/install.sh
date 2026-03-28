@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# install.sh — Bootstrap the forge dev environment
-# Run: curl -fsSL https://raw.githubusercontent.com/USER/forge/main/scripts/install.sh | bash
+# install.sh — Bootstrap dotfiles
+# Run: curl -fsSL https://raw.githubusercontent.com/YOUR_USER/dotfiles/main/scripts/install.sh | bash
 set -euo pipefail
 
-FORGE_DIR="${HOME}/.forge"
+DOTFILES_DIR="${HOME}/.dotfiles"
 CONFIG_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}"
 
 echo "═══════════════════════════════════════"
-echo "  forge — local dev environment setup"
+echo "  dotfiles — environment setup"
 echo "═══════════════════════════════════════"
 echo ""
 
@@ -15,12 +15,12 @@ echo ""
 OS="$(uname -s)"
 case "$OS" in
     Darwin) PKG_MGR="brew" ;;
-    Linux)  PKG_MGR="apt" ;;  # Extend for other distros as needed
+    Linux)  PKG_MGR="apt" ;;
     *)      echo "Unsupported OS: $OS"; exit 1 ;;
 esac
 
 # ─── Install dependencies ───────────────────
-echo "→ Installing dependencies via $PKG_MGR..."
+echo "-> Installing dependencies via $PKG_MGR..."
 
 if [[ "$PKG_MGR" == "brew" ]]; then
     command -v brew &>/dev/null || {
@@ -28,91 +28,82 @@ if [[ "$PKG_MGR" == "brew" ]]; then
         exit 1
     }
 
-    PACKAGES=(tmux starship atuin zoxide fzf fastfetch bat)
-    for pkg in "${PACKAGES[@]}"; do
-        if ! brew list "$pkg" &>/dev/null; then
-            echo "  Installing $pkg..."
-            brew install "$pkg"
-        else
-            echo "  $pkg ✓"
-        fi
-    done
-
-    # Nerd font
-    if ! brew list --cask font-jetbrains-mono-nerd-font &>/dev/null; then
-        echo "  Installing JetBrains Mono Nerd Font..."
-        brew install --cask font-jetbrains-mono-nerd-font
+    # Clone repo first so we can use the Brewfile
+    if [[ ! -d "$DOTFILES_DIR" ]]; then
+        echo ""
+        echo "-> Cloning dotfiles repo..."
+        git clone https://github.com/YOUR_USER/dotfiles.git "$DOTFILES_DIR"
     else
-        echo "  JetBrains Mono Nerd Font ✓"
+        echo ""
+        echo "-> dotfiles repo already at $DOTFILES_DIR"
     fi
 
-    # Ghostty
-    if ! brew list ghostty &>/dev/null 2>&1; then
-        echo "  Installing Ghostty..."
-        brew install --cask ghostty
-    else
-        echo "  Ghostty ✓"
-    fi
-fi
-
-# ─── Clone repo if not already present ───────
-if [[ ! -d "$FORGE_DIR" ]]; then
-    echo ""
-    echo "→ Cloning forge repo..."
-    git clone https://github.com/YOUR_USER/forge.git "$FORGE_DIR"
-else
-    echo ""
-    echo "→ forge repo already at $FORGE_DIR"
+    echo "-> Installing packages from Brewfile..."
+    brew bundle --file="$DOTFILES_DIR/Brewfile" --no-lock
 fi
 
 # ─── Symlink configs ────────────────────────
 echo ""
-echo "→ Linking configuration files..."
+echo "-> Linking configuration files..."
 
 mkdir -p "$CONFIG_DIR"
 
 # Ghostty
 mkdir -p "$CONFIG_DIR/ghostty"
-ln -sfn "$FORGE_DIR/dot_config/ghostty/config" "$CONFIG_DIR/ghostty/config"
-ln -sfn "$FORGE_DIR/dot_config/ghostty/shaders" "$CONFIG_DIR/ghostty/shaders"
+ln -sfn "$DOTFILES_DIR/dot_config/ghostty/config" "$CONFIG_DIR/ghostty/config"
+ln -sfn "$DOTFILES_DIR/dot_config/ghostty/shaders" "$CONFIG_DIR/ghostty/shaders"
 echo "  Ghostty config ✓"
 
 # tmux
 mkdir -p "$CONFIG_DIR/tmux"
-ln -sfn "$FORGE_DIR/dot_config/tmux/tmux.conf" "$CONFIG_DIR/tmux/tmux.conf"
+ln -sfn "$DOTFILES_DIR/dot_config/tmux/tmux.conf" "$CONFIG_DIR/tmux/tmux.conf"
 echo "  tmux config ✓"
 
 # Starship
-ln -sfn "$FORGE_DIR/dot_config/starship.toml" "$CONFIG_DIR/starship.toml"
+ln -sfn "$DOTFILES_DIR/dot_config/starship.toml" "$CONFIG_DIR/starship.toml"
 echo "  Starship config ✓"
 
 # Fastfetch
 mkdir -p "$CONFIG_DIR/fastfetch"
-ln -sfn "$FORGE_DIR/dot_config/fastfetch/config.jsonc" "$CONFIG_DIR/fastfetch/config.jsonc"
+ln -sfn "$DOTFILES_DIR/dot_config/fastfetch/config.jsonc" "$CONFIG_DIR/fastfetch/config.jsonc"
 echo "  Fastfetch config ✓"
 
-# ─── Add bin to PATH ────────────────────────
-chmod +x "$FORGE_DIR/bin/"*
-if ! echo "$PATH" | grep -q "$FORGE_DIR/bin"; then
-    echo ""
-    echo "→ Add to your .zshrc:"
-    echo "  export PATH=\"$FORGE_DIR/bin:\$PATH\""
-fi
+# Neovim
+ln -sfn "$DOTFILES_DIR/dot_config/nvim" "$CONFIG_DIR/nvim"
+echo "  Neovim config ✓"
 
-# ─── Add zshrc module sourcing ───────────────
-ZSHRC_LINE="for f in $FORGE_DIR/dot_zshrc.d/*.zsh; do source \"\$f\"; done"
+# Sheldon
+mkdir -p "$CONFIG_DIR/sheldon"
+ln -sfn "$DOTFILES_DIR/dot_config/sheldon/plugins.toml" "$CONFIG_DIR/sheldon/plugins.toml"
+echo "  Sheldon config ✓"
+
+# mise
+mkdir -p "$CONFIG_DIR/mise"
+ln -sfn "$DOTFILES_DIR/dot_config/mise/config.toml" "$CONFIG_DIR/mise/config.toml"
+echo "  mise config ✓"
+
+# Git
+mkdir -p "$CONFIG_DIR/git"
+ln -sfn "$DOTFILES_DIR/dot_config/git/config" "$CONFIG_DIR/git/config"
+ln -sfn "$DOTFILES_DIR/dot_config/git/ignore" "$CONFIG_DIR/git/ignore"
+echo "  Git config ✓"
+
+# ─── Add bin to PATH ────────────────────────
+chmod +x "$DOTFILES_DIR/bin/"*
+
+# ─── zshrc setup ────────────────────────────
+ZSHRC_LINE="for f in $DOTFILES_DIR/dot_zshrc.d/*.zsh; do source \"\$f\"; done"
 if ! grep -q "dot_zshrc.d" ~/.zshrc 2>/dev/null; then
     echo ""
-    echo "→ Add to your .zshrc (or replace its contents):"
+    echo "-> Add to your .zshrc (or replace its contents):"
     echo ""
-    echo "  export PATH=\"$FORGE_DIR/bin:\$PATH\""
     echo "  $ZSHRC_LINE"
 fi
 
 # ─── Install TPM ────────────────────────────
 if [[ ! -d ~/.tmux/plugins/tpm ]]; then
     echo ""
-    echo "→ Installing tmux plugin manager..."
+    echo "-> Installing tmux plugin manager..."
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
     echo "  TPM ✓ (press prefix + I inside tmux to install plugins)"
 else
@@ -120,9 +111,20 @@ else
     echo "  TPM ✓"
 fi
 
+# ─── mise setup ─────────────────────────────
+if command -v mise &>/dev/null; then
+    echo ""
+    echo "-> Setting up runtimes via mise..."
+    mise install
+    echo "  mise runtimes ✓"
+fi
+
 echo ""
 echo "═══════════════════════════════════════"
 echo "  Done. Open Ghostty and run: tmux"
-echo "  Then press Ctrl+Space + I to install"
-echo "  tmux plugins."
+echo ""
+echo "  Next steps:"
+echo "  1. Press Ctrl+Space + I to install tmux plugins"
+echo "  2. Run 'nvim' to bootstrap LazyVim"
+echo "  3. Run 'sheldon lock' to install shell plugins"
 echo "═══════════════════════════════════════"

@@ -1,28 +1,21 @@
-# 10-plugins.zsh — Shell plugins (loaded via zinit Turbo mode)
+# 10-plugins.zsh — Plugin settings (plugins loaded by sheldon in 00-sheldon.zsh)
 
-# Syntax highlighting (load first for correct binding)
-zinit light zsh-users/zsh-syntax-highlighting
-
-# Autosuggestions from history
-zinit light zsh-users/zsh-autosuggestions
+# ─── Autosuggestions ──��──────────────────────
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#6c7086"
 
-# fzf-tab: fzf-powered completion menu
-zinit light Aloxaf/fzf-tab
+# ─── fzf-tab ────────────────────────────────
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:*' fzf-min-height 10
 
-# Completions
-zinit light zsh-users/zsh-completions
+# ─── Completions ─────────────────────────────
 autoload -Uz compinit && compinit -C
 
-# History substring search
-zinit light zsh-users/zsh-history-substring-search
+# ─── History substring search ────────────────
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
-# History settings
+# ─── History settings ────────────────────────
 HISTSIZE=50000
 SAVEHIST=50000
 HISTFILE=~/.zsh_history

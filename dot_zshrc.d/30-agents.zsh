@@ -4,43 +4,42 @@
 # ─── Agent aliases ───────────────────────────
 alias cc="claude"
 alias cch="claude --print"                       # Headless / one-shot mode
-alias amp="amp"
 alias cx="codex"
 
 # ─── Environment ─────────────────────────────
-# Anthropic — set your API key in ~/.config/forge/secrets.env or via 1Password
-[[ -f ~/.config/forge/secrets.env ]] && source ~/.config/forge/secrets.env
+# Anthropic — set your API key in ~/.config/dotfiles/secrets.env or via 1Password
+[[ -f ~/.config/dotfiles/secrets.env ]] && source ~/.config/dotfiles/secrets.env
 
 # Track which agent is "active" in this shell (used by starship prompt)
 # Set by the agent wrapper functions below
-export FORGE_ACTIVE_AGENT=""
+export DOTFILES_ACTIVE_AGENT=""
 
 # ─── Agent wrapper functions ─────────────────
 # These set the active agent indicator and launch the tool
 
 function claude() {
-    export FORGE_ACTIVE_AGENT="claude"
+    export DOTFILES_ACTIVE_AGENT="claude"
     command claude "$@"
-    export FORGE_ACTIVE_AGENT=""
+    export DOTFILES_ACTIVE_AGENT=""
 }
 
 function amp() {
-    export FORGE_ACTIVE_AGENT="amp"
+    export DOTFILES_ACTIVE_AGENT="amp"
     command amp "$@"
-    export FORGE_ACTIVE_AGENT=""
+    export DOTFILES_ACTIVE_AGENT=""
 }
 
 function codex() {
-    export FORGE_ACTIVE_AGENT="codex"
+    export DOTFILES_ACTIVE_AGENT="codex"
     command codex "$@"
-    export FORGE_ACTIVE_AGENT=""
+    export DOTFILES_ACTIVE_AGENT=""
 }
 
 # ─── Parallel agent sessions ────────────────
 # Launch N Claude Code headless agents on different tasks
-# Usage: forge-parallel "task1" "task2" "task3"
-function forge-parallel() {
-    local session_name="forge-agents"
+# Usage: parallel-agents "task1" "task2" "task3"
+function parallel-agents() {
+    local session_name="agent-pool"
     tmux new-session -d -s "$session_name" -n "agent-0" 2>/dev/null || true
 
     local i=0
@@ -60,9 +59,9 @@ function forge-parallel() {
 
 # ─── Git worktree + agent helper ─────────────
 # Create a worktree and immediately open an agent in it
-# Usage: forge-worktree feature-branch [claude|amp|codex]
-function forge-worktree() {
-    local branch="${1:?Usage: forge-worktree <branch> [agent]}"
+# Usage: worktree-agent feature-branch [claude|amp|codex]
+function worktree-agent() {
+    local branch="${1:?Usage: worktree-agent <branch> [agent]}"
     local agent="${2:-claude}"
     local worktree_path="../${branch}"
 
