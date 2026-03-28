@@ -22,7 +22,7 @@ SESSION_NAME="$(basename "$PROJECT_DIR" | tr '.' '-')"
 
 # If session exists, just attach
 if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
-    if [[ -n "$TMUX" ]]; then
+    if [[ -n "${TMUX:-}" ]]; then
         tmux switch-client -t "$SESSION_NAME"
     else
         tmux attach-session -t "$SESSION_NAME"
@@ -44,7 +44,7 @@ fi
 tmux select-window -t "${SESSION_NAME}:edit"
 
 # Attach
-if [[ -n "$TMUX" ]]; then
+if [[ -n "${TMUX:-}" ]]; then
     tmux switch-client -t "$SESSION_NAME"
 else
     tmux attach-session -t "$SESSION_NAME"
