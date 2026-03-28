@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+# post-checkout — Auto-symlink shared files into new git worktrees
+# Installed globally via core.hooksPath. Fires on git worktree add.
+#
+# Detects ecosystem (node, python, go, etc.) and symlinks heavy
+# directories and env files from the main worktree so you don't
+# have to reinstall or copy secrets.
+
+prev_head="$1"
+new_head="$2"
+branch_flag="$3"
+
+# Only run on new worktree creation (prev_head is all zeros)
+if [ "$prev_head" != "0000000000000000000000000000000000000000" ]; then
+    exit 0
+fi
+
+# Find the main (primary) worktree path
+main_worktree="$(git worktree list --porcelain | head -1 | sed 's/^worktree //')"
+current_dir="$(pwd)"
+
+# Don't run in the main worktree itself
+if [ "$main_worktree" = "$current_dir" ]; then
+    exit 0
+fi
+
+echo "🔗 Worktree symlink hook: linking shared files from main worktree"
+
+linked=0
+
+# ─── Environment files (always) ─────────────────
+for envfile in "$main_worktree"/.env*; do
+    [ -f "$envfile" ] || continue
+    basename="$(basename "$envfile")"
+    if [ ! -e "$current_dir/$basename" ]; then
+        ln -sf "$envfile" "$current_dir/$basename"
+        echo "  ✓ $basename"
+        linked=$((linked + 1))
+    fi
+done
+
+# ─── Node.js ────────────────────────────────────
+if [ -f "$current_dir/package.json" ] && [ -d "$main_worktree/node_modules" ]; then
+    if [ ! -e "$current_dir/node_modules" ]; then
+        ln -sf "$main_worktree/node_modules" "$current_dir/node_modules"
+        echo "  ✓ node_modules"
+        linked=$((linked + 1))
+    fi
+fi
+
+# ─── pnpm monorepo (apps/packages with their own node_modules) ──
+if [ -f "$current_dir/pnpm-workspace.yaml" ]; then
+    find "$main_worktree" -maxdepth 3 -name "node_modules" -type d | while read -r nm_dir; do
+        relative="${nm_dir#"$main_worktree/"}"
+        target_dir="$current_dir/$(dirname "$relative")"
+        if [ -d "$target_dir" ] && [ ! -e "$target_dir/node_modules" ]; then
+            ln -sf "$nm_dir" "$target_dir/node_modules"
+            echo "  ✓ $relative"
+            linked=$((linked + 1))
+        fi
+    done
+fi
+
+# ─── Next.js / Nuxt build caches ───────────────
+for cachedir in .next .nuxt; do
+    if [ -d "$main_worktree/$cachedir" ] && [ ! -e "$current_dir/$cachedir" ]; then
+        ln -sf "$main_worktree/$cachedir" "$current_dir/$cachedir"
+        echo "  ✓ $cachedir"
+        linked=$((linked + 1))
+    fi
+done
+
+# ─── Python ─────────────────────────────────────
+if [ -f "$current_dir/pyproject.toml" ] || [ -f "$current_dir/requirements.txt" ]; then
+    if [ -d "$main_worktree/.venv" ] && [ ! -e "$current_dir/.venv" ]; then
+        ln -sf "$main_worktree/.venv" "$current_dir/.venv"
+        echo "  ✓ .venv"
+        linked=$((linked + 1))
+    fi
+fi
+
+# ─── Go ─────────────────────────────────────────
+if [ -f "$current_dir/go.mod" ]; then
+    if [ -d "$main_worktree/vendor" ] && [ ! -e "$current_dir/vendor" ]; then
+        ln -sf "$main_worktree/vendor" "$current_dir/vendor"
+        echo "  ✓ vendor"
+        linked=$((linked + 1))
+    fi
+fi
+
+# ─── Ruby ────────────────────────────────────────
+if [ -f "$current_dir/Gemfile" ]; then
+    if [ -d "$main_worktree/vendor/bundle" ] && [ ! -e "$current_dir/vendor" ]; then
+        mkdir -p "$current_dir/vendor"
+        ln -sf "$main_worktree/vendor/bundle" "$current_dir/vendor/bundle"
+        echo "  ✓ vendor/bundle"
+        linked=$((linked + 1))
+    fi
+fi
+
+# ─── iOS ─────────────────────────────────────────
+if [ -f "$current_dir/Podfile" ] && [ -d "$main_worktree/Pods" ]; then
+    if [ ! -e "$current_dir/Pods" ]; then
+        ln -sf "$main_worktree/Pods" "$current_dir/Pods"
+        echo "  ✓ Pods"
+        linked=$((linked + 1))
+    fi
+fi
+
+# ─── Gradle ──────────────────────────────────────
+if [ -f "$current_dir/build.gradle" ] || [ -f "$current_dir/build.gradle.kts" ]; then
+    if [ -d "$main_worktree/.gradle" ] && [ ! -e "$current_dir/.gradle" ]; then
+        ln -sf "$main_worktree/.gradle" "$current_dir/.gradle"
+        echo "  ✓ .gradle"
+        linked=$((linked + 1))
+    fi
+fi
+
+if [ "$linked" -gt 0 ]; then
+    echo "  Linked $linked item(s) from $(basename "$main_worktree")"
+else
+    echo "  Nothing to link"
+fi
