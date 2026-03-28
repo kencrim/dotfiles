@@ -10,6 +10,14 @@ prev_head="$1"
 new_head="$2"
 branch_flag="$3"
 
+# ─── Chain to repo-local hook if it exists ──────
+# core.hooksPath overrides per-repo hooks, so we run them manually
+git_dir="$(git rev-parse --git-dir)"
+local_hook="$git_dir/hooks/post-checkout"
+if [ -x "$local_hook" ]; then
+    "$local_hook" "$@"
+fi
+
 # Only run on new worktree creation (prev_head is all zeros)
 if [ "$prev_head" != "0000000000000000000000000000000000000000" ]; then
     exit 0
