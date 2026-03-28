@@ -19,19 +19,19 @@ Personal terminal environment for agentic coding. Ghostty + tmux + Neovim + zsh,
 
 ```bash
 brew install chezmoi
-chezmoi init --apply https://github.com/YOUR_USER/dotfiles.git
+chezmoi init --apply https://github.com/kencrim/dotfiles.git
 ```
 
 ### With the bootstrap script
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/YOUR_USER/dotfiles/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/kencrim/dotfiles/main/scripts/install.sh | bash
 ```
 
 ### Manual
 
 ```bash
-git clone https://github.com/YOUR_USER/dotfiles.git ~/.dotfiles
+git clone https://github.com/kencrim/dotfiles.git ~/.dotfiles
 brew bundle --file=~/.dotfiles/Brewfile
 # Then symlink configs (see scripts/install.sh for paths)
 ```

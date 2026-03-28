@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # install.sh — Bootstrap dotfiles
-# Run: curl -fsSL https://raw.githubusercontent.com/YOUR_USER/dotfiles/main/scripts/install.sh | bash
+# Run: curl -fsSL https://raw.githubusercontent.com/kencrim/dotfiles/main/scripts/install.sh | bash
 set -euo pipefail
 
 DOTFILES_DIR="${HOME}/.dotfiles"
@@ -32,7 +32,7 @@ if [[ "$PKG_MGR" == "brew" ]]; then
     if [[ ! -d "$DOTFILES_DIR" ]]; then
         echo ""
         echo "-> Cloning dotfiles repo..."
-        git clone https://github.com/YOUR_USER/dotfiles.git "$DOTFILES_DIR"
+        git clone https://github.com/kencrim/dotfiles.git "$DOTFILES_DIR"
     else
         echo ""
         echo "-> dotfiles repo already at $DOTFILES_DIR"

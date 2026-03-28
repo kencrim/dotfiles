@@ -37,4 +37,4 @@ brew "tmux"
 brew "claude-squad"
 
 # Fonts
-cask "font-jetbrains-mono-nerd-font"
+cask "font-maple-mono-nf"
