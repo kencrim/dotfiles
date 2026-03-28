@@ -5,6 +5,7 @@
 alias cc="claude"
 alias cch="claude --print"                       # Headless / one-shot mode
 alias cx="codex"
+alias cs="claude-squad"
 
 # ─── Environment ─────────────────────────────
 # Anthropic — set your API key in ~/.config/dotfiles/secrets.env or via 1Password
@@ -35,27 +36,10 @@ function codex() {
     export DOTFILES_ACTIVE_AGENT=""
 }
 
-# ─── Parallel agent sessions ────────────────
-# Launch N Claude Code headless agents on different tasks
-# Usage: parallel-agents "task1" "task2" "task3"
-function parallel-agents() {
-    local session_name="agent-pool"
-    tmux new-session -d -s "$session_name" -n "agent-0" 2>/dev/null || true
-
-    local i=0
-    for task in "$@"; do
-        if [[ $i -eq 0 ]]; then
-            tmux send-keys -t "${session_name}:agent-0" "claude --print '$task'" Enter
-        else
-            tmux new-window -t "$session_name" -n "agent-${i}"
-            tmux send-keys -t "${session_name}:agent-${i}" "claude --print '$task'" Enter
-        fi
-        ((i++))
-    done
-
-    echo "Launched $i agent(s) in tmux session '$session_name'"
-    echo "Attach with: tmux attach -t $session_name"
-}
+# ─── Agent Teams (experimental) ─────────────
+# Uncomment to enable Claude Code's native multi-agent tmux integration
+# Known issues: race conditions, pane-base-index conflicts, idle teammates
+# export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 
 # ─── Git worktree + agent helper ─────────────
 # Create a worktree and immediately open an agent in it

@@ -4,17 +4,24 @@
 # Usage:
 #   worksesh              # Use current directory
 #   worksesh ~/code/vesta # Use specified directory
-#   worksesh -a claude    # Also set default agent for the session
+#   worksesh -s           # Also launch claude-squad in a second window
 #
-# Creates a session named after the directory with:
-#   Window 0: "edit"   — main terminal / editor
-#   Window 1: "agent"  — for running Claude Code / Amp / Codex
-#   Window 2: "run"    — server / test runner / logs
+# Creates a session named after the directory.
+# Use prefix+y for Claude popup, prefix+u for claude-squad popup.
 
 set -euo pipefail
 
-PROJECT_DIR="${1:-.}"
-AGENT="${2:-}"
+SQUAD=false
+
+# Parse flags
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -s|--squad) SQUAD=true; shift ;;
+        *) PROJECT_DIR="$1"; shift ;;
+    esac
+done
+
+PROJECT_DIR="${PROJECT_DIR:-.}"
 
 # Resolve to absolute path
 PROJECT_DIR="$(cd "$PROJECT_DIR" && pwd)"
@@ -32,16 +39,12 @@ fi
 
 # Create new session
 tmux new-session -d -s "$SESSION_NAME" -n "edit" -c "$PROJECT_DIR"
-tmux new-window -t "$SESSION_NAME" -n "agent" -c "$PROJECT_DIR"
-tmux new-window -t "$SESSION_NAME" -n "run" -c "$PROJECT_DIR"
 
-# If an agent was specified, launch it in the agent window
-if [[ -n "$AGENT" ]]; then
-    tmux send-keys -t "${SESSION_NAME}:agent" "$AGENT" Enter
+# Optionally launch claude-squad
+if [[ "$SQUAD" == true ]]; then
+    tmux new-window -t "$SESSION_NAME" -n "squad" -c "$PROJECT_DIR" "claude-squad"
+    tmux select-window -t "${SESSION_NAME}:edit"
 fi
-
-# Focus on edit window
-tmux select-window -t "${SESSION_NAME}:edit"
 
 # Attach
 if [[ -n "${TMUX:-}" ]]; then

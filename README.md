@@ -48,6 +48,8 @@ for f in ~/.dotfiles/dot_zshrc.d/*.zsh; do source "$f"; done
 dotfiles/
 ├── Brewfile                        # Declarative package manifest
 ├── .chezmoiignore                  # chezmoi exclusion rules
+├── dot_claude-squad/
+│   └── config.json                # claude-squad defaults (dangerously-skip-permissions)
 ├── dot_config/
 │   ├── ghostty/
 │   │   ├── config                  # Terminal config (Catppuccin, shaders)
@@ -91,15 +93,19 @@ Each project gets its own tmux session. `worksesh` handles creation:
 ```bash
 worksesh              # Use current directory
 worksesh ~/code/vesta # Specify a path
-worksesh . claude     # Auto-launch agent in agent window
+worksesh -s           # Also launch claude-squad
 ```
 
-Standard layout:
-- Window 0: `edit` — Neovim
-- Window 1: `agent` — Claude Code / Amp / Codex
-- Window 2: `run` — server / test runner
+Claude is always one key away via popups — no dedicated window needed:
 
-Switch between projects with `prefix + s` (session picker).
+| Keys | What it does |
+|---|---|
+| `prefix + y` | Summon/dismiss Claude as a floating overlay (persists in background) |
+| `prefix + Y` | Kill Claude popup session (fresh start) |
+| `prefix + u` | Open claude-squad popup for multi-agent management |
+| `prefix + s` | Session picker (switch between projects) |
+
+For multi-agent work, use `claude-squad` (`cs`) — it creates worktrees and Claude instances per task automatically.
 
 ## Neovim workflow
 
@@ -115,19 +121,22 @@ Files auto-reload when agents modify them on disk. `swapfile` is disabled to avo
 
 ## Agent workflow
 
-The `30-agents.zsh` module sets up wrappers for all three agents:
+The primary multi-agent workflow uses `claude-squad`, which manages Claude Code instances in isolated git worktrees:
+
+```bash
+cs                                       # Launch claude-squad TUI
+worktree-agent feature-branch [claude]   # Manual: git worktree + single agent
+```
+
+Quick aliases:
 
 ```bash
 cc        # claude (Claude Code)
 cx        # codex (OpenAI Codex CLI)
+cs        # claude-squad
 ```
 
-The starship prompt shows which agent is active. Helper functions:
-
-```bash
-parallel-agents "task1" "task2" "task3"  # Launch headless agents in tmux
-worktree-agent feature-branch [claude]   # Git worktree + agent
-```
+The starship prompt shows which agent is active. Agent Teams (experimental) can be enabled by uncommenting the line in `~/.zshrc.d/30-agents.zsh`.
 
 ## Ghostty shaders
 
