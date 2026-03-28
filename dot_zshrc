@@ -1,0 +1,4 @@
+# ~/.zshrc — managed by chezmoi
+# Modular config: drop files into ~/.zshrc.d/ (chezmoi sources them in order)
+
+for f in ~/.zshrc.d/*.zsh; do source "$f"; done

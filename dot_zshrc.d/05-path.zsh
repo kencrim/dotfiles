@@ -21,5 +21,5 @@ export PATH="$PATH:$HOME/.maestro/bin"
 # Local bin
 [[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
 
-# Dotfiles bin
-export PATH="$HOME/.dotfiles/bin:$PATH"
+# Dotfiles bin (chezmoi deploys to ~/bin)
+export PATH="$HOME/bin:$PATH"
