@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(echo \"SHELL: $SHELL\")",
+      "Bash(git commit:*)",
+      "Bash(chezmoi apply:*)",
+      "Bash(chezmoi source-path:*)",
+      "Read(//Users/kencrimmins/.local/share/chezmoi/**)",
+      "Bash(cp /Users/kencrimmins/Documents/GitHub/dotfiles/dot_zshrc ~/.local/share/chezmoi/dot_zshrc)",
+      "Bash(cp /Users/kencrimmins/Documents/GitHub/dotfiles/dot_zshrc.d/05-path.zsh ~/.local/share/chezmoi/dot_zshrc.d/05-path.zsh)",
+      "Bash(chezmoi diff:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "Bash(git add:*)"
+    ]
+  }
+}
