@@ -8,39 +8,23 @@ Personal terminal environment for agentic coding. Ghostty + tmux + Neovim + zsh,
 - **tmux** with session-per-project workflow, Catppuccin status bar, and vim-tmux-navigator
 - **Neovim** via LazyVim with claudecode.nvim, diffview.nvim, and Catppuccin Mocha
 - **zsh** with modular config, sheldon plugin manager, starship prompt, atuin history, zoxide
-- **Git** config with delta (side-by-side syntax-highlighted diffs)
+- **Git** config with delta (syntax-highlighted diffs)
+- **claude-squad** for multi-agent orchestration across git worktrees
 - **mise** for unified runtime management (node, python)
 - **Brewfile** for declarative package management
-- Scripts for parallel agentic coding sessions across tmux
 
 ## Quick start
-
-### With chezmoi (recommended)
 
 ```bash
 brew install chezmoi
 chezmoi init --apply https://github.com/kencrim/dotfiles.git
 ```
 
-### With the bootstrap script
+That single command installs all packages (via Brewfile), deploys all configs, and wires up `~/.zshrc`. After it completes:
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/kencrim/dotfiles/main/scripts/install.sh | bash
-```
-
-### Manual
-
-```bash
-git clone https://github.com/kencrim/dotfiles.git ~/.dotfiles
-brew bundle --file=~/.dotfiles/Brewfile
-# Then symlink configs (see scripts/install.sh for paths)
-```
-
-After install, add to your `~/.zshrc`:
-
-```bash
-for f in ~/.dotfiles/dot_zshrc.d/*.zsh; do source "$f"; done
-```
+1. Open a new terminal (or `exec zsh`)
+2. Run `tmux` — then press `Ctrl+Space I` to install tmux plugins
+3. Run `nvim` to bootstrap LazyVim on first launch
 
 ## Layout
 
@@ -49,63 +33,92 @@ dotfiles/
 ├── Brewfile                        # Declarative package manifest
 ├── .chezmoiignore                  # chezmoi exclusion rules
 ├── dot_claude-squad/
-│   └── config.json                # claude-squad defaults (dangerously-skip-permissions)
+│   └── config.json                 # claude-squad config
 ├── dot_config/
 │   ├── ghostty/
 │   │   ├── config                  # Terminal config (Catppuccin, shaders)
 │   │   └── shaders/
 │   │       ├── aurora.glsl         # Aurora background animation
-│   │       └── cursor-glow.glsl   # Soft cursor glow effect
+│   │       └── cursor-glow.glsl    # Soft cursor glow effect
 │   ├── tmux/
-│   │   └── tmux.conf              # tmux with vim-tmux-navigator
+│   │   └── tmux.conf               # tmux with vim-tmux-navigator
 │   ├── nvim/
-│   │   ├── init.lua               # LazyVim bootstrap
+│   │   ├── init.lua                # LazyVim bootstrap
 │   │   └── lua/
-│   │       ├── config/            # options, keymaps, autocmds
-│   │       └── plugins/           # colorscheme, editor, ai, disabled
+│   │       ├── config/             # options, keymaps, autocmds
+│   │       └── plugins/            # colorscheme, editor, ai, disabled
 │   ├── git/
-│   │   ├── config                 # Git config with delta
-│   │   └── ignore                 # Global gitignore
+│   │   ├── config                  # Git config with delta
+│   │   └── ignore                  # Global gitignore
 │   ├── sheldon/
-│   │   └── plugins.toml           # Zsh plugin declarations
+│   │   └── plugins.toml            # Zsh plugin declarations
 │   ├── mise/
-│   │   └── config.toml            # Runtime versions (node, python)
-│   ├── starship.toml              # Prompt config
+│   │   └── config.toml             # Runtime versions (node, python)
+│   ├── starship.toml               # Prompt config
 │   └── fastfetch/
-│       └── config.jsonc           # System info display
+│       └── config.jsonc            # System info display
 ├── dot_zshrc.d/
-│   ├── 00-sheldon.zsh             # Plugin manager bootstrap
-│   ├── 05-path.zsh               # PATH and environment setup
-│   ├── 10-plugins.zsh            # Plugin settings
-│   ├── 20-aliases.zsh            # Aliases (git, docker, tmux)
-│   ├── 30-agents.zsh             # Agent wrappers and helpers
-│   └── 40-prompt.zsh             # Starship + shell integrations
+│   ├── 00-sheldon.zsh              # Plugin manager bootstrap
+│   ├── 05-path.zsh                 # PATH and environment setup
+│   ├── 10-plugins.zsh              # Plugin settings
+│   ├── 20-aliases.zsh              # Aliases (git, docker, tmux)
+│   ├── 30-agents.zsh               # Agent wrappers and helpers
+│   └── 40-prompt.zsh               # Starship + shell integrations
 ├── bin/
-│   └── worksesh                   # tmux session-per-project script
+│   └── worksesh                    # tmux session-per-project script
 └── scripts/
-    └── install.sh                 # Bootstrap script
+    └── install.sh                  # Bootstrap script (non-chezmoi)
 ```
 
 ## The tmux workflow
 
-Each project gets its own tmux session. `worksesh` handles creation:
+Each project gets its own tmux session. `worksesh` creates one:
 
 ```bash
-worksesh              # Use current directory
-worksesh ~/code/vesta # Specify a path
-worksesh -s           # Also launch claude-squad
+ws                    # Current directory
+ws ~/code/vesta       # Specify a path
+wss                   # Also launch claude-squad in a second window
 ```
 
-Claude is always one key away via popups — no dedicated window needed:
+Key bindings (prefix is `Ctrl+Space`):
 
 | Keys | What it does |
 |---|---|
-| `prefix + y` | Summon/dismiss Claude as a floating overlay (persists in background) |
-| `prefix + Y` | Kill Claude popup session (fresh start) |
-| `prefix + u` | Open claude-squad popup for multi-agent management |
+| `prefix + c` | New window |
+| `prefix + 1/2/3` | Switch windows |
 | `prefix + s` | Session picker (switch between projects) |
+| `prefix + S` | Create a new session |
+| `prefix + C-c` | Open Claude Code in a new window |
+| `prefix + \|` | Split pane horizontally |
+| `prefix + -` | Split pane vertically |
+| `Ctrl+h/j/k/l` | Navigate between tmux panes and Neovim splits |
 
-For multi-agent work, use `claude-squad` (`cs`) — it creates worktrees and Claude instances per task automatically.
+## Agent workflow
+
+For multi-agent work, use `claude-squad` — it manages Claude Code instances in isolated git worktrees (one worktree per task, automatic branch creation):
+
+```bash
+cs                                       # Launch claude-squad TUI
+```
+
+For single-agent work:
+
+```bash
+cc                                       # Claude Code in current terminal
+worktree-agent feature-branch [claude]   # Git worktree + agent
+```
+
+Quick aliases:
+
+```bash
+cc        # claude (Claude Code)
+cx        # codex (OpenAI Codex CLI)
+cs        # claude-squad
+ws        # worksesh
+wss       # worksesh -s (with claude-squad window)
+```
+
+The starship prompt shows which agent is active.
 
 ## Neovim workflow
 
@@ -118,25 +131,6 @@ Neovim is configured as the primary code review interface for AI-generated chang
 - `Ctrl+h/j/k/l` — Navigate seamlessly between tmux panes and Neovim splits
 
 Files auto-reload when agents modify them on disk. `swapfile` is disabled to avoid conflicts.
-
-## Agent workflow
-
-The primary multi-agent workflow uses `claude-squad`, which manages Claude Code instances in isolated git worktrees:
-
-```bash
-cs                                       # Launch claude-squad TUI
-worktree-agent feature-branch [claude]   # Manual: git worktree + single agent
-```
-
-Quick aliases:
-
-```bash
-cc        # claude (Claude Code)
-cx        # codex (OpenAI Codex CLI)
-cs        # claude-squad
-```
-
-The starship prompt shows which agent is active. Agent Teams (experimental) can be enabled by uncommenting the line in `~/.zshrc.d/30-agents.zsh`.
 
 ## Ghostty shaders
 
