@@ -101,13 +101,6 @@ For multi-agent work, use `claude-squad` — it manages Claude Code instances in
 cs                                       # Launch claude-squad TUI
 ```
 
-For single-agent work:
-
-```bash
-cc                                       # Claude Code in current terminal
-worktree-agent feature-branch [claude]   # Git worktree + agent
-```
-
 Quick aliases:
 
 ```bash

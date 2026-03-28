@@ -40,20 +40,3 @@ function codex() {
 # Uncomment to enable Claude Code's native multi-agent tmux integration
 # Known issues: race conditions, pane-base-index conflicts, idle teammates
 # export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
-
-# ─── Git worktree + agent helper ─────────────
-# Create a worktree and immediately open an agent in it
-# Usage: worktree-agent feature-branch [claude|amp|codex]
-function worktree-agent() {
-    local branch="${1:?Usage: worktree-agent <branch> [agent]}"
-    local agent="${2:-claude}"
-    local worktree_path="../${branch}"
-
-    git worktree add "$worktree_path" -b "$branch" 2>/dev/null || \
-        git worktree add "$worktree_path" "$branch"
-
-    cd "$worktree_path"
-    echo "Worktree created at $worktree_path"
-    echo "Launching $agent..."
-    "$agent"
-}
