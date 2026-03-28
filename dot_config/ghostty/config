@@ -1,0 +1,59 @@
+# ──────────────────────────────────────────────
+# Ghostty config — ~/.config/ghostty/config
+# ──────────────────────────────────────────────
+
+# Font
+font-family = "JetBrainsMono Nerd Font"
+font-size = 14
+font-thicken = true
+adjust-cell-height = 15%
+
+# Theme — Catppuccin Mocha
+theme = catppuccin-mocha
+
+# Window
+window-padding-x = 12
+window-padding-y = 8
+window-decoration = true
+macos-titlebar-style = tabs
+background-opacity = 0.92
+background-blur = 20
+unfocused-split-opacity = 0.85
+
+# Shell integration
+shell-integration = zsh
+shell-integration-features = cursor,sudo,title
+
+# Behavior
+mouse-hide-while-typing = true
+copy-on-select = false
+confirm-close-surface = false
+scrollback-limit = 50000
+
+# Cursor
+cursor-style = bar
+cursor-style-blink = true
+
+# ──────────────────────────────────────────────
+# Shaders
+# Comment out to disable. Ghostty hot-reloads.
+# Stack order: first listed = first applied.
+# ──────────────────────────────────────────────
+custom-shader = shaders/aurora.glsl
+custom-shader = shaders/cursor-glow.glsl
+custom-shader-animation = always
+
+# ──────────────────────────────────────────────
+# Keybindings — tmux-friendly
+# Avoid stomping on Ctrl+Space (tmux prefix)
+# ──────────────────────────────────────────────
+keybind = super+n=new_window
+keybind = super+t=new_tab
+keybind = super+shift+enter=new_split:auto
+keybind = super+ctrl+left=goto_split:left
+keybind = super+ctrl+right=goto_split:right
+keybind = super+ctrl+up=goto_split:top
+keybind = super+ctrl+down=goto_split:bottom
+
+# Quick shader toggle: super+shift+s reloads config
+keybind = super+shift+s=reload_config

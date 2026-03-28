@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# worksesh — Create or attach to a tmux session for a project directory
+#
+# Usage:
+#   worksesh              # Use current directory
+#   worksesh ~/code/vesta # Use specified directory
+#   worksesh -a claude    # Also set default agent for the session
+#
+# Creates a session named after the directory with:
+#   Window 0: "edit"   — main terminal / editor
+#   Window 1: "agent"  — for running Claude Code / Amp / Codex
+#   Window 2: "run"    — server / test runner / logs
+
+set -euo pipefail
+
+PROJECT_DIR="${1:-.}"
+AGENT="${2:-}"
+
+# Resolve to absolute path
+PROJECT_DIR="$(cd "$PROJECT_DIR" && pwd)"
+SESSION_NAME="$(basename "$PROJECT_DIR" | tr '.' '-')"
+
+# If session exists, just attach
+if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+    if [[ -n "$TMUX" ]]; then
+        tmux switch-client -t "$SESSION_NAME"
+    else
+        tmux attach-session -t "$SESSION_NAME"
+    fi
+    exit 0
+fi
+
+# Create new session
+tmux new-session -d -s "$SESSION_NAME" -n "edit" -c "$PROJECT_DIR"
+tmux new-window -t "$SESSION_NAME" -n "agent" -c "$PROJECT_DIR"
+tmux new-window -t "$SESSION_NAME" -n "run" -c "$PROJECT_DIR"
+
+# If an agent was specified, launch it in the agent window
+if [[ -n "$AGENT" ]]; then
+    tmux send-keys -t "${SESSION_NAME}:agent" "$AGENT" Enter
+fi
+
+# Focus on edit window
+tmux select-window -t "${SESSION_NAME}:edit"
+
+# Attach
+if [[ -n "$TMUX" ]]; then
+    tmux switch-client -t "$SESSION_NAME"
+else
+    tmux attach-session -t "$SESSION_NAME"
+fi

@@ -1,0 +1,78 @@
+# ──────────────────────────────────────────────
+# Starship prompt — ~/.config/starship.toml
+# Clean two-line prompt with git, k8s, and agent info
+# ──────────────────────────────────────────────
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$kubernetes\
+$env_var\
+$fill\
+$cmd_duration\
+$line_break\
+$character"""
+
+# ─── Modules ─────────────────────────────────
+
+[character]
+success_symbol = "[❯](lavender)"
+error_symbol = "[❯](red)"
+
+[directory]
+truncation_length = 3
+truncation_symbol = "…/"
+style = "bold blue"
+
+[git_branch]
+format = " [$branch]($style) "
+style = "mauve"
+
+[git_status]
+format = "[$all_status$ahead_behind]($style)"
+style = "red"
+conflicted = "≠"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+modified = "!"
+staged = "+"
+untracked = "?"
+
+[kubernetes]
+disabled = false
+format = " [$context(:$namespace)]($style) "
+style = "cyan"
+detect_files = ["k8s", "Chart.yaml", "helmfile.yaml"]
+
+# Active agent indicator (set by 30-agents.zsh)
+[env_var.FORGE_ACTIVE_AGENT]
+variable = "FORGE_ACTIVE_AGENT"
+format = " [$env_value]($style) "
+style = "bold green"
+description = "Currently running coding agent"
+
+[cmd_duration]
+min_time = 2000
+format = "[$duration]($style) "
+style = "fg:#6c7086"
+
+[fill]
+symbol = " "
+
+# ─── Disabled modules (keep prompt clean) ────
+[package]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[python]
+disabled = true
+
+[rust]
+disabled = true
+
+[java]
+disabled = true

@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Editor
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Secrets (never commit)
+secrets.env
+*.key
+*.pem
+
+# TPM plugins (installed at runtime)
+.tmux/
+
+# Zinit (installed at runtime)
+.local/share/zinit/
+
+# Nix
+result
+.direnv/
