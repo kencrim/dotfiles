@@ -11,6 +11,9 @@
 .idea/
 .vscode/
 
+# Claude Code (session-specific permissions)
+.claude/
+
 # Secrets (never commit)
 secrets.env
 *.key
