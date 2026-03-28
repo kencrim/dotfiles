@@ -2,5 +2,5 @@
 #!/bin/bash
 
 # Brewfile hash: {{ include "Brewfile" | sha256sum }}
-brew bundle --no-lock --file={{ joinPath .chezmoi.sourceDir "Brewfile" | quote }}
+brew bundle --file={{ joinPath .chezmoi.sourceDir "Brewfile" | quote }}
 {{ end -}}
