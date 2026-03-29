@@ -64,20 +64,19 @@ dotfiles/
 │   ├── 20-aliases.zsh              # Aliases (git, docker, tmux)
 │   ├── 30-agents.zsh               # Agent wrappers and helpers
 │   └── 40-prompt.zsh               # Starship + shell integrations
-├── bin/
-│   └── worksesh                    # tmux session-per-project script
 └── scripts/
     └── install.sh                  # Bootstrap script (non-chezmoi)
 ```
 
 ## The tmux workflow
 
-Each project gets its own tmux session. `worksesh` creates one:
+Each workstream gets its own tmux session. Use `ws` (from [grimoire](https://github.com/kencrim/grimoire)) for agent-managed workstreams, or create sessions manually.
 
 ```bash
-ws                    # Current directory
-ws ~/code/vesta       # Specify a path
-wss                   # Also launch claude-squad in a second window
+ws add auth --agent amp --task "Build JWT auth"    # Create a workstream
+ws list                                            # Show the DAG
+ws send auth "prioritize sessions"                 # Message an agent
+ws kill auth                                       # Tear down
 ```
 
 Key bindings (prefix is `Ctrl+Space`):
@@ -105,10 +104,10 @@ Quick aliases:
 
 ```bash
 cc        # claude (Claude Code)
+aa        # amp
 cx        # codex (OpenAI Codex CLI)
 cs        # claude-squad
-ws        # worksesh
-wss       # worksesh -s (with claude-squad window)
+ws        # workstream CLI (grimoire)
 ```
 
 The starship prompt shows which agent is active.

@@ -3,4 +3,10 @@
 
 # Brewfile hash: {{ include "Brewfile" | sha256sum }}
 brew bundle --file={{ joinPath .chezmoi.sourceDir "Brewfile" | quote }}
+
+# Install mise runtimes (node, python, etc.)
+# mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
+if command -v mise &>/dev/null; then
+    mise install --yes
+fi
 {{ end -}}

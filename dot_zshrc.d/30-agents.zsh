@@ -4,6 +4,7 @@
 # ─── Agent aliases ───────────────────────────
 alias cc="claude"
 alias cch="claude --print"                       # Headless / one-shot mode
+alias aa="amp"
 alias cx="codex"
 alias cs="claude-squad"
 

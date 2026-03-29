@@ -36,5 +36,9 @@ brew "tmux"
 # Agent orchestration
 brew "claude-squad"
 
+# Build tools (for grimoire CLI monorepo)
+brew "go-task"
+brew "goreleaser"
+
 # Fonts
 cask "font-maple-mono-nf"

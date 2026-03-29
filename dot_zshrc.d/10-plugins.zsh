@@ -12,8 +12,8 @@ zstyle ':fzf-tab:*' fzf-min-height 10
 autoload -Uz compinit && compinit -C
 
 # ─── History substring search ────────────────
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
+# Keybindings are set via sheldon post-hook in plugins.toml
+# (ensures widget exists before bindkey runs)
 
 # ─── History settings ────────────────────────
 HISTSIZE=50000

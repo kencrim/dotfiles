@@ -2,5 +2,10 @@
   "default_program": "claude --dangerously-skip-permissions",
   "auto_yes": false,
   "daemon_poll_interval": 1000,
-  "branch_prefix": "kencrimmins/"
+  "branch_prefix": "kencrimmins/",
+  "profiles": [
+    { "name": "claude", "program": "claude --dangerously-skip-permissions" },
+    { "name": "amp", "program": "amp --dangerously-allow-all" },
+    { "name": "codex", "program": "codex --full-auto" }
+  ]
 }

@@ -40,8 +40,6 @@ alias t="tmux"
 alias ta="tmux attach -t"
 alias tl="tmux list-sessions"
 alias tk="tmux kill-session -t"
-alias ws="worksesh"
-alias wss="worksesh -s"                          # worksesh + claude-squad
 
 # ─── Misc ────────────────────────────────────
 alias cat="bat --style=plain 2>/dev/null || cat"
