@@ -38,13 +38,19 @@ cursor-style-blink = true
 # ──────────────────────────────────────────────
 # Shaders
 # Comment out to disable. Ghostty hot-reloads.
-# Stack order: first listed = first applied.
+# Cmd+Shift+S to reload after changes.
 # ──────────────────────────────────────────────
-# Background shaders disabled while we find better ones
-# custom-shader = shaders/aurora.glsl
-# custom-shader = shaders/workstream.glsl
 
-# Cursor effects — faded warp trail + ripple on mode change
+# Background — pick ONE (animated-gradient is default)
+custom-shader = shaders/animated-gradient-shader.glsl
+# custom-shader = shaders/starfield.glsl
+# custom-shader = shaders/inside-the-matrix.glsl
+# custom-shader = shaders/sparks-from-fire.glsl
+# custom-shader = shaders/just-snow.glsl
+# custom-shader = shaders/gears-and-belts.glsl
+# custom-shader = shaders/cubes.glsl
+
+# Cursor effects (stacked — both run together)
 custom-shader = shaders/cursor_warp.glsl
 custom-shader = shaders/ripple_cursor.glsl
 
@@ -52,6 +58,7 @@ custom-shader = shaders/ripple_cursor.glsl
 # custom-shader = shaders/cursor_sweep.glsl
 # custom-shader = shaders/cursor_tail.glsl
 # custom-shader = shaders/sonic_boom_cursor.glsl
+# custom-shader = shaders/cursor-glow.glsl
 
 custom-shader-animation = always
 
