@@ -41,6 +41,7 @@ cursor-style-blink = true
 # Stack order: first listed = first applied.
 # ──────────────────────────────────────────────
 custom-shader = shaders/aurora.glsl
+custom-shader = shaders/workstream.glsl
 custom-shader = shaders/cursor-glow.glsl
 custom-shader-animation = always
 
