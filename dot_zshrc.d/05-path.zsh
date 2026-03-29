@@ -18,8 +18,5 @@ export PATH="$PATH:$HOME/go/bin"
 # Maestro
 export PATH="$PATH:$HOME/.maestro/bin"
 
-# Local bin
-[[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
-
-# Dotfiles bin (chezmoi deploys to ~/bin)
-export PATH="$HOME/bin:$PATH"
+# Local bin (uv, Claude Code, etc.)
+export PATH="$HOME/.local/bin:$PATH"

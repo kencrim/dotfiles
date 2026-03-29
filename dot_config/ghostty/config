@@ -9,7 +9,7 @@ font-thicken = true
 adjust-cell-height = 15%
 
 # Theme — Catppuccin Mocha
-theme = catppuccin-mocha
+theme = Catppuccin Mocha
 
 # Window
 window-padding-x = 12

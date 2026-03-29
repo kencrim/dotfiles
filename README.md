@@ -30,6 +30,7 @@ That single command installs all packages (via Brewfile), deploys all configs, a
 
 ```
 dotfiles/
+├── .chezmoi.toml.tmpl              # chezmoi config (prompts for git identity)
 ├── Brewfile                        # Declarative package manifest
 ├── .chezmoiignore                  # chezmoi exclusion rules
 ├── dot_claude-squad/
@@ -48,8 +49,10 @@ dotfiles/
 │   │       ├── config/             # options, keymaps, autocmds
 │   │       └── plugins/            # colorscheme, editor, ai, disabled
 │   ├── git/
-│   │   ├── config                  # Git config with delta
-│   │   └── ignore                  # Global gitignore
+│   │   ├── config.tmpl              # Git config with delta (templated)
+│   │   ├── ignore                  # Global gitignore
+│   │   └── hooks/
+│   │       └── post-checkout       # Worktree symlink automation
 │   ├── sheldon/
 │   │   └── plugins.toml            # Zsh plugin declarations
 │   ├── mise/
@@ -64,20 +67,11 @@ dotfiles/
 │   ├── 20-aliases.zsh              # Aliases (git, docker, tmux)
 │   ├── 30-agents.zsh               # Agent wrappers and helpers
 │   └── 40-prompt.zsh               # Starship + shell integrations
-└── scripts/
-    └── install.sh                  # Bootstrap script (non-chezmoi)
 ```
 
 ## The tmux workflow
 
-Each workstream gets its own tmux session. Use `ws` (from [grimoire](https://github.com/kencrim/grimoire)) for agent-managed workstreams, or create sessions manually.
-
-```bash
-ws add auth --agent amp --task "Build JWT auth"    # Create a workstream
-ws list                                            # Show the DAG
-ws send auth "prioritize sessions"                 # Message an agent
-ws kill auth                                       # Tear down
-```
+Each workstream gets its own tmux session.
 
 Key bindings (prefix is `Ctrl+Space`):
 
@@ -107,7 +101,6 @@ cc        # claude (Claude Code)
 aa        # amp
 cx        # codex (OpenAI Codex CLI)
 cs        # claude-squad
-ws        # workstream CLI (grimoire)
 ```
 
 The starship prompt shows which agent is active.
