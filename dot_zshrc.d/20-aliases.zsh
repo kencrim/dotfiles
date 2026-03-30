@@ -29,6 +29,7 @@ alias gp="git push"
 alias gpf="git push --force-with-lease"
 alias gwt="git worktree"
 alias gwtl="git worktree list"
+command -v wt &>/dev/null && eval "$(wt shell-init)"
 
 # ─── Docker ──────────────────────────────────
 alias d="docker"
