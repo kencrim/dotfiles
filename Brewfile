@@ -29,6 +29,10 @@ brew "fastfetch"
 
 # Runtime management
 brew "mise"
+brew "rustup" # keg-only; PATH set in ~/.zshrc.d/06-rust.zsh
+
+# Game dev (feanor)
+cask "blender@lts"
 
 # tmux
 brew "tmux"
